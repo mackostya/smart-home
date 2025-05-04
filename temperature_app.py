@@ -32,4 +32,10 @@ if __name__ == "__main__":
             .field("T", temperature)
         )
         write_api.write(bucket=bucket, org="pi", record=point)
+        point = (
+            Point("living_room")
+            .tag("P", "P")
+            .field("P", pressure)
+        )
+        write_api.write(bucket=bucket, org="pi", record=point)
         time.sleep(5) # separate points by 1 second
