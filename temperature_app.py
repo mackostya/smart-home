@@ -8,6 +8,8 @@ except ImportError:
     from smbus import SMBus
        
 if __name__ == "__main__":
+    print("Initialising BMP280 and InfluxDB client...")
+    counter = 0
     # Initialise the BMP280
     bus = SMBus(1)
     bmp280 = BMP280(i2c_dev=bus)
@@ -21,9 +23,14 @@ if __name__ == "__main__":
     bucket="temperature"
 
     write_api = write_client.write_api(write_options=SYNCHRONOUS)
+    time_sleep = 10 # time interval in seconds
+    degree_sign = u"\N{DEGREE SIGN}"
     
-    
+    print("Initialised BMP280 and InfluxDB client.")
+    print(f"Starting data collection with time interval of {time_sleep}s...")
+    print("Press Ctrl+C to exit!")
     while True:
+        counter += 1
         temperature = bmp280.get_temperature()
         pressure = bmp280.get_pressure()
         point = (
@@ -38,4 +45,10 @@ if __name__ == "__main__":
             .field("P", pressure)
         )
         write_api.write(bucket=bucket, org="pi", record=point)
-        time.sleep(5) # separate points by 1 second
+        if counter % 10 == 0:
+            print("10 points written to InfluxDB.")
+            format_temp = "{:.2f}".format(temperature)
+            format_press = "{:.2f}".format(pressure)
+            print('Temperature = ' + format_temp + degree_sign + 'C')
+            print('Pressure = ' + format_press + ' hPa \n')
+        time.sleep(time_sleep)
