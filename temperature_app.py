@@ -23,7 +23,7 @@ if __name__ == "__main__":
     bucket="temperature"
 
     write_api = write_client.write_api(write_options=SYNCHRONOUS)
-    time_sleep = 10 # time interval in seconds
+    time_sleep = 60 * 5 # time interval in seconds
     degree_sign = u"\N{DEGREE SIGN}"
     
     print("Initialised BMP280 and InfluxDB client.")
